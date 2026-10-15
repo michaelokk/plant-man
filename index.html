@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>שאלון תמחור גינון</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&display=swap">
+<style>
+:root {
+  --bg: #f3f5f0;
+  --surface: #ffffff;
+  --ink: #1d2a1f;
+  --muted: #5d6b5f;
+  --line: #d6ddd3;
+  --accent: #2f6b3a;
+  --accent-soft: #e2eedf;
+  --sun: #e7b53c;
+  --danger: #a3392b;
+  --display: "Secular One", "Assistant", "Arial Hebrew", Arial, sans-serif;
+  --body: "Assistant", "Arial Hebrew", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131a14; --surface: #1b241c; --ink: #e6ede4; --muted: #9fae9f; --line: #2f3b30;
+    --accent: #7fc28a; --accent-soft: #243827; --sun: #e7b53c; --danger: #e48a7c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131a14; --surface: #1b241c; --ink: #e6ede4; --muted: #9fae9f; --line: #2f3b30;
+  --accent: #7fc28a; --accent-soft: #243827; --sun: #e7b53c; --danger: #e48a7c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; padding-bottom: env(safe-area-inset-bottom, 0px); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+.wrap { max-width: 720px; margin: 0 auto; padding-inline: 16px; padding-block: 0 80px; }
+h1, h2 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: clamp(30px, 7vw, 42px); }
+h2 { font-size: 26px; }
+.hero { padding-block: 40px 24px; display: grid; gap: 12px; }
+.hero p { margin: 0; color: var(--muted); max-width: 60ch; }
+.eyebrow { font-size: 14px; letter-spacing: .04em; color: var(--accent); font-weight: 700; }
+
+.bar { position: sticky; top: 0; padding-top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar-inner { max-width: 720px; margin: 0 auto; padding-inline: 16px; padding-block: 10px; display: flex; gap: 12px; align-items: center; }
+.nav { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+.nav a { white-space: nowrap; font-size: 14px; text-decoration: none; color: var(--ink); padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); }
+.nav a.done { border-color: var(--accent); color: var(--accent); }
+.nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.status { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.status.ok { color: var(--accent); }
+.status.err { color: var(--danger); }
+
+.banner { margin-top: 16px; padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); border: 1px solid var(--line); font-size: 15px; }
+
+section.sec { padding-block: 36px 8px; border-top: 1px solid var(--line); display: grid; gap: 22px; scroll-margin-top: 70px; }
+section.sec:first-of-type { border-top: 0; }
+.sec-head { display: grid; gap: 4px; }
+.sec-head p { margin: 0; color: var(--muted); }
+.count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.field { display: grid; gap: 8px; min-width: 0; }
+.field > label, .field > .lbl { font-weight: 700; }
+.hint { font-size: 14px; color: var(--muted); margin-top: -4px; }
+input[type=text], input[type=number], textarea, select {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; width: 100%;
+}
+textarea { min-height: 84px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.unit { display: flex; align-items: center; gap: 8px; max-width: 240px; }
+.unit span { color: var(--muted); white-space: nowrap; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); font-size: 15px; cursor: pointer; }
+.chip input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.scale .chips { gap: 6px; }
+.scale .chip span { min-width: 22px; text-align: center; font-variant-numeric: tabular-nums; }
+.scale-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); max-width: 300px; }
+
+.job { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 16px; display: grid; gap: 18px; }
+.job.example { background: transparent; border-style: dashed; }
+.job-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.job-head h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 20px; }
+.tag { font-size: 13px; padding: 2px 10px; border-radius: 99px; background: var(--sun); color: #2a2205; font-weight: 700; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+.ex-row { display: grid; gap: 2px; font-size: 15px; }
+.ex-row b { font-weight: 700; }
+.ex-row span { color: var(--muted); }
+
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.ph { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--bg); border: 1px solid var(--line); display: grid; place-items: center; font-size: 13px; color: var(--muted); text-align: center; padding: 4px; }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ph.err { color: var(--danger); border-color: var(--danger); }
+.ph button { position: absolute; top: 4px; inset-inline-start: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 99px; background: rgba(0,0,0,.6); color: #fff; font-size: 16px; line-height: 26px; }
+.add-photo { display: inline-flex; align-items: center; gap: 8px; justify-self: start; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--accent); color: var(--accent); background: transparent; font-weight: 700; cursor: pointer; position: relative; }
+.add-photo input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.add-photo:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.photo-msg { font-size: 14px; color: var(--danger); }
+
+button { font: inherit; cursor: pointer; border-radius: 8px; }
+.btn { padding: 11px 18px; border: 0; background: var(--accent); color: var(--bg); font-weight: 700; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px dashed var(--accent); width: 100%; padding-block: 14px; }
+.btn-del { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 5px 10px; font-size: 14px; }
+.btn-del.armed { border-color: var(--danger); color: var(--danger); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.finish { display: grid; gap: 14px; }
+.finish p { margin: 0; color: var(--muted); }
+#copyBox { min-height: 160px; font-size: 14px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="bar-inner">
+    <nav class="nav" id="nav" aria-label="חלקי השאלון"></nav>
+    <span class="status" id="status" aria-live="polite"></span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">אפליקציית תמחור לגננים · שאלון היכרות</div>
+    <h1>איך מתמחרים עבודת גינון</h1>
+    <p>אנחנו בונים אפליקציה שתעזור לתת הצעת מחיר מדויקת לכל גינה, על בסיס איך שאתם כבר מתמחרים. כדי שהיא תחשב כמוכם, צריך ללמוד ממכם קודם.</p>
+    <p>אין תשובות נכונות או לא נכונות. אפשר לדלג על שאלות, למלא בכמה פעמים ולחזור לכאן מתי שרוצים. הכל נשמר תוך כדי כתיבה, ונשלח אלינו אוטומטית.</p>
+    <p><b>החלק הכי חשוב הוא "עבודות שעשיתם".</b> כל עבודה אמיתית עם המחיר שגביתם שווה יותר מכל השאר ביחד.</p>
+    <div class="banner" id="banner" hidden></div>
+  </header>
+
+  <form id="form" autocomplete="off"></form>
+
+  <section class="sec finish" id="sec-finish">
+    <h2>סיימתם?</h2>
+    <p>התשובות והתמונות כבר נשלחו אלינו. אפשר לחזור לקישור הזה מאותו טלפון ולהוסיף עבודות בכל זמן.</p>
+    <p>רוצים לשלוח עותק גם בוואטסאפ? לחצו על הכפתור והדביקו בצ'אט.</p>
+    <div><button class="btn" type="button" id="copyBtn">העתקת כל התשובות</button></div>
+    <textarea id="copyBox" readonly hidden aria-label="כל התשובות כטקסט"></textarea>
+  </section>
+</div>
+
+<script>
+// Supabase (INKnerd project). The anon key is public by design; the database only
+// lets it call save_gardener_response and add photos. See supabase/questionnaire.sql.
+const SUPABASE_URL = 'https://cjagfbkilnxwvqmzedzf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqYWdmYmtpbG54d3ZxbXplZHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMzU1ODIsImV4cCI6MjEwNjcxMTU4Mn0.-ng6pD_HD7QMNXvdUpAWR9K9LRXeC5Q6FQvykkZYCyg';
+const PHOTO_BUCKET = 'gardener-photos';
+
+const SERVICES = ['אחזקת גינה שוטפת','כיסוח דשא','גיזום גדר חיה','גיזום עצים','כריתת עצים','ניקוי גינה מוזנחת','שתילה','הנחת דשא','התקנת מערכת השקיה','תיקוני השקיה','חיפוי (חצץ, קליפות, אבנים)','תכנון ועיצוב גינה','פינוי גזם','ריסוס והדברה','גינות גג ומרפסת'];
+
+const SECTIONS = [
+  { id: 'about', nav: 'עליכם', title: 'קצת עליכם', intro: 'כדי להבין את העסק שמאחורי המחירים.', fields: [
+    { id: 'name', type: 'text', label: 'שם' },
+    { id: 'area', type: 'text', label: 'באילו יישובים ואזורים עובדים?', hint: 'למשל: מודיעין, שוהם, המושבים בסביבה' },
+    { id: 'years', type: 'number', label: 'כמה שנים בתחום?', unit: 'שנים' },
+    { id: 'team', type: 'radio', label: 'עובדים לבד או עם צוות?', options: ['לבד', 'עם עובד אחד', 'עם 2 עובדים ומעלה', 'משתנה לפי העבודה'] },
+    { id: 'workerCost', type: 'number', label: 'כמה עולה עובד ליום עבודה?', unit: '₪', hint: 'רק אם יש עובדים' },
+    { id: 'business', type: 'radio', label: 'סוג העסק', options: ['עוסק פטור', 'עוסק מורשה', 'חברה', 'לא בטוח'] },
+    { id: 'vat', type: 'radio', label: 'המחיר שאומרים ללקוח כולל מע"מ?', options: ['כן, כולל', 'לא, מוסיפים מע"מ', 'תלוי בלקוח'] },
+    { id: 'jobsPerWeek', type: 'number', label: 'כמה עבודות בשבוע בממוצע?', unit: 'עבודות' },
+  ]},
+  { id: 'pricing', nav: 'תמחור היום', title: 'איך מתמחרים היום', intro: 'המספרים שיש לכם בראש, גם אם הם לא כתובים בשום מקום.', fields: [
+    { id: 'method', type: 'checks', label: 'איך בדרך כלל מגיעים למחיר?', hint: 'אפשר לסמן כמה', options: ['לפי שעות עבודה', 'מחיר קבוע לכל סוג עבודה', 'לפי גודל (מ"ר, מטרים)', 'לפי יום עבודה', 'לפי תחושה וניסיון', 'לפי מה שהלקוח מוכן לשלם'] },
+    { id: 'hourly', type: 'number', label: 'מחיר לשעת עבודה', unit: '₪ לשעה' },
+    { id: 'daily', type: 'number', label: 'מחיר ליום עבודה מלא', unit: '₪ ליום' },
+    { id: 'minimum', type: 'number', label: 'מחיר מינימום ליציאה לעבודה', unit: '₪', hint: 'הסכום הכי נמוך שעוד שווה לצאת בשבילו' },
+    { id: 'materials', type: 'radio', label: 'איך מחייבים על חומרים? (שתילים, אדמה, צנרת)', options: ['בדיוק מה שעלה לי', 'מה שעלה לי ועוד אחוז', 'הלקוח קונה בעצמו', 'כלול במחיר העבודה'] },
+    { id: 'materialsPct', type: 'number', label: 'אם מוסיפים אחוז על חומרים, כמה?', unit: '%' },
+    { id: 'waste', type: 'radio', label: 'פינוי גזם ופסולת', options: ['כלול במחיר', 'תוספת קבועה', 'לפי כמות', 'הלקוח מפנה'] },
+    { id: 'wasteCost', type: 'text', label: 'כמה עולה פינוי?', hint: 'למשל: 250 ₪ לבלה, 700 ₪ למכולה' },
+    { id: 'travel', type: 'radio', label: 'גובים על נסיעה?', options: ['לא', 'רק מעבר למרחק מסוים', 'תמיד'] },
+    { id: 'travelNote', type: 'text', label: 'אם כן, איך מחשבים?' },
+    { id: 'quoteHow', type: 'radio', label: 'איך נותנים הצעת מחיר היום?', options: ['במקום, בעל פה', 'בוואטסאפ אחרי הביקור', 'מסמך מסודר', 'בטלפון, בלי לראות את הגינה'] },
+    { id: 'visitPaid', type: 'radio', label: 'ביקור להצעת מחיר עולה כסף?', options: ['לא', 'כן', 'מתקזז אם סוגרים עבודה'] },
+  ]},
+  { id: 'services', nav: 'סוגי עבודות', title: 'סוגי עבודות', intro: 'מה עושים, ומה המחירים הקבועים שיש לכם בראש.', fields: [
+    { id: 'services', type: 'checks', label: 'אילו עבודות עושים?', options: SERVICES },
+    { id: 'basePrices', type: 'textarea', label: 'מחירי בסיס שאתם זוכרים בעל פה', hint: 'כמה שיותר מספרים. למשל: כיסוח דשא עד 50 מ"ר 150 ₪, גיזום גדר חיה 25 ₪ למטר, גיזום עץ גבוה 400 ₪' },
+    { id: 'mainIncome', type: 'text', label: 'מאיזה סוג עבודה מגיעה רוב ההכנסה?' },
+    { id: 'notWorth', type: 'textarea', label: 'עבודות שלא לוקחים, או שלא שוות את הזמן. למה?' },
+  ]},
+  { id: 'maint', nav: 'אחזקה קבועה', title: 'אחזקה קבועה', intro: 'לקוחות שמגיעים אליהם כל שבוע, שבועיים או חודש.', fields: [
+    { id: 'hasMaint', type: 'radio', label: 'יש לקוחות קבועים?', options: ['כן', 'לא', 'רוצה שיהיו יותר'] },
+    { id: 'maintCount', type: 'number', label: 'כמה לקוחות קבועים בערך?', unit: 'לקוחות' },
+    { id: 'maintFreq', type: 'checks', label: 'כל כמה זמן מגיעים?', options: ['פעם בשבוע', 'פעם בשבועיים', 'פעם בחודש', 'משתנה לפי עונה'] },
+    { id: 'maintPrice', type: 'textarea', label: 'איך נקבע המחיר החודשי? תנו דוגמה אמיתית', hint: 'למשל: גינה של 80 מ"ר, פעם בשבועיים, שעתיים כל ביקור, 450 ₪ לחודש' },
+    { id: 'maintIncluded', type: 'textarea', label: 'מה כלול בביקור קבוע, ועל מה גובים בנפרד?' },
+    { id: 'seasonal', type: 'textarea', label: 'המחירים או כמות העבודה משתנים בין קיץ לחורף?' },
+  ]},
+  { id: 'factors', nav: 'מה מייקר', title: 'מה מייקר עבודה', intro: 'הדברים שגורמים לכם להגיד מחיר גבוה יותר, או להצטער שלא אמרתם.', fields: [
+    { id: 'factors', type: 'checks', label: 'מה גורם להעלות מחיר?', hint: 'אפשר לסמן כמה', options: ['גישה קשה או מדרגות', 'אין חניה קרובה', 'גינה מוזנחת', 'שיפוע או מדרון', 'עצים גבוהים', 'צמחייה קוצנית', 'הרבה פסולת', 'עבודה דחופה', 'שישי או ערב חג', 'לקוח עם הרבה דרישות', 'מרחק נסיעה', 'אזור יוקרתי'] },
+    { id: 'factorsHow', type: 'textarea', label: 'בכמה בערך כל דבר כזה מעלה את המחיר?', hint: 'למשל: מדרגות 20% יותר, גינה מוזנחת כמעט פי שניים' },
+    { id: 'discounts', type: 'textarea', label: 'מתי נותנים הנחה?' },
+    { id: 'underpriced', type: 'textarea', label: 'ספרו על פעם שתמחרתם נמוך מדי. מה פספסתם?' },
+    { id: 'lost', type: 'textarea', label: 'עבודות שהפסדתם בגלל המחיר. כמה ביקשתם, וכמה הלקוח רצה לשלם?' },
+  ]},
+  { id: 'jobs', nav: 'עבודות שעשיתם', title: 'עבודות שעשיתם', intro: 'מכאן האפליקציה לומדת את המחירים שלכם. מספיקות 10 עבודות, ו־20 כבר מצוין. גם עבודות קטנות חשובות. מספרים משוערים זה בסדר.', jobs: true },
+  { id: 'app', nav: 'האפליקציה', title: 'מה רוצים מהאפליקציה', intro: 'מה יחסוך לכם זמן, ומה יגרום לכם להשתמש בה באמת.', fields: [
+    { id: 'features', type: 'checks', label: 'מה חשוב שהאפליקציה תעשה?', hint: 'אפשר לסמן כמה', options: ['הצעת מחיר מהירה בשטח', 'צילום הגינה והערכת עבודה אוטומטית', 'שליחת הצעת מחיר מעוצבת בוואטסאפ', 'חישוב מחיר חודשי לאחזקה', 'רשימת לקוחות והיסטוריה', 'תזכורות לביקורים קבועים', 'מעקב תשלומים וחובות', 'חישוב חומרים וכמויות', 'קבלות וחשבוניות', 'יומן עבודות שבועי', 'השוואה למחירים בשוק'] },
+    { id: 'topFeature', type: 'textarea', label: 'אם היא עושה רק דבר אחד ממש טוב, מה הוא?' },
+    { id: 'where', type: 'radio', label: 'איפה תשתמשו בה בעיקר?', options: ['בשטח, מול הלקוח', 'באוטו, אחרי הביקור', 'בבית, בערב'] },
+    { id: 'speed', type: 'radio', label: 'כמה זמן מקסימום מוכנים להשקיע בהצעת מחיר אחת?', options: ['פחות מדקה', 'עד 5 דקות', 'עד רבע שעה', 'לא משנה, העיקר שיהיה מדויק'] },
+    { id: 'showClient', type: 'radio', label: 'הלקוח יראה את המסך?', options: ['כן, אני מראה לו', 'לא, רק אני', 'רק את ההצעה הסופית'] },
+    { id: 'quoteLook', type: 'textarea', label: 'מה צריך להופיע בהצעת מחיר שנשלחת ללקוח?', hint: 'פירוט עבודות, תמונות, תנאי תשלום, תוקף ההצעה, לוגו...' },
+    { id: 'tools', type: 'textarea', label: 'במה משתמשים היום? מחברת, אקסל, וואטסאפ, אפליקציה אחרת' },
+    { id: 'annoying', type: 'textarea', label: 'מה הכי מעצבן היום בכל עניין המחירים והלקוחות?' },
+    { id: 'pay', type: 'radio', label: 'אם האפליקציה הייתה חוסכת זמן ועוזרת לגבות יותר, הייתם משלמים עליה?', options: ['כן', 'אולי', 'לא'] },
+    { id: 'payHow', type: 'text', label: 'אם כן, כמה בחודש נשמע הוגן?' },
+    { id: 'more', type: 'textarea', label: 'עוד משהו שחשוב שנדע?' },
+  ]},
+];
+
+const JOB_FIELDS = [
+  { id: 'title', type: 'text', label: 'מה עשיתם?', hint: 'משפט אחד. למשל: גיזום גדר חיה וכיסוח דשא בחצר אחורית' },
+  { id: 'kind', type: 'select', label: 'סוג עבודה עיקרי', options: SERVICES.concat(['אחר']) },
+  { id: 'place', type: 'text', label: 'יישוב או אזור' },
+  { id: 'size', type: 'text', label: 'גודל', hint: 'מה שמתאים: מ"ר של גינה או דשא, מטרים של גדר, מספר עצים' },
+  { id: 'condition', type: 'scale', label: 'מצב הגינה לפני העבודה', ends: ['מטופחת', 'ג\'ונגל'] },
+  { id: 'access', type: 'radio', label: 'גישה', options: ['קלה', 'בינונית', 'קשה (מדרגות, סחיבה, אין חניה)'] },
+  { id: 'hours', type: 'number', label: 'כמה שעות לקח?', unit: 'שעות', half: true },
+  { id: 'workers', type: 'number', label: 'כמה אנשים עבדו?', unit: 'אנשים', half: true },
+  { id: 'price', type: 'number', label: 'כמה גביתם בסך הכל?', unit: '₪', half: true },
+  { id: 'materials', type: 'number', label: 'מזה חומרים ופינוי', unit: '₪', half: true },
+  { id: 'recurring', type: 'radio', label: 'חד־פעמית או קבועה?', options: ['חד־פעמית', 'קבועה, פעם בשבוע', 'קבועה, פעם בשבועיים', 'קבועה, פעם בחודש'] },
+  { id: 'reaction', type: 'radio', label: 'איך הלקוח הגיב למחיר?', options: ['הסכים מיד', 'התמקח', 'ויתר על העבודה'] },
+  { id: 'feel', type: 'radio', label: 'בדיעבד, המחיר היה', options: ['נמוך מדי', 'בדיוק', 'גבוה'] },
+  { id: 'notes', type: 'textarea', label: 'הערות', hint: 'מה היה מיוחד בעבודה הזאת' },
+  { id: 'photos', type: 'photos', label: 'תמונות', hint: 'לפני ואחרי, אם יש. אפשר לצלם עכשיו או לבחור מהגלריה.' },
+];
+
+const STORE_KEY = 'gardener-questionnaire-v1';
+const form = document.getElementById('form');
+const statusEl = document.getElementById('status');
+const bannerEl = document.getElementById('banner');
+
+const uid = () => Math.random().toString(36).slice(2, 9);
+const uuid = () => crypto.randomUUID ? crypto.randomUUID()
+  : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+const newJob = () => ({ id: uid() });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const isFilled = v => Array.isArray(v) ? v.length > 0 : v !== undefined && v !== null && String(v).trim() !== '';
+
+let state = { rid: null, answers: {}, jobs: [], updatedAt: 0 };
+try { const raw = localStorage.getItem(STORE_KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
+if (!state.rid) state.rid = uuid();
+if (!state.jobs.length) state.jobs = [newJob()];
+
+// Uploads in flight, per job: [{ key, status: 'up' | 'err' }]
+const pending = {};
+
+function photosHTML(job) {
+  const done = (job.photos || []).map((url, i) =>
+    `<div class="ph"><img src="${esc(url)}" alt="תמונה ${i + 1}" loading="lazy"><button type="button" data-unphoto="${job.id}" data-i="${i}" aria-label="הסרת תמונה ${i + 1}">×</button></div>`);
+  const busy = (pending[job.id] || []).map(p => p.status === 'err'
+    ? `<div class="ph err">ההעלאה נכשלה</div>` : `<div class="ph">מעלה...</div>`);
+  return done.concat(busy).join('');
+}
+
+function fieldHTML(f, val, key) {
+  const id = 'f-' + key.replace(/\./g, '-');
+  const hint = f.hint ? `<div class="hint">${esc(f.hint)}</div>` : '';
+  if (f.type === 'text') return `<div class="field"><label for="${id}">${esc(f.label)}</label>${hint}<input type="text" id="${id}" data-key="${key}" value="${esc(val)}"></div>`;
+  if (f.type === 'textarea') return `<div class="field"><label for="${id}">${esc(f.label)}</label>${hint}<textarea id="${id}" data-key="${key}">${esc(val)}</textarea></div>`;
+  if (f.type === 'number') return `<div class="field"><label for="${id}">${esc(f.label)}</label>${hint}<div class="unit"><input type="number" inputmode="decimal" min="0" step="any" id="${id}" data-key="${key}" value="${esc(val)}"><span>${esc(f.unit || '')}</span></div></div>`;
+  if (f.type === 'select') return `<div class="field"><label for="${id}">${esc(f.label)}</label><select id="${id}" data-key="${key}"><option value="">בחרו</option>${f.options.map(o => `<option${o === val ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></div>`;
+  if (f.type === 'radio' || f.type === 'checks') {
+    const multi = f.type === 'checks';
+    const vals = multi ? (val || []) : [val];
+    return `<div class="field" role="group" aria-labelledby="${id}-l"><div class="lbl" id="${id}-l">${esc(f.label)}</div>${hint}<div class="chips">${f.options.map((o, i) =>
+      `<label class="chip"><input type="${multi ? 'checkbox' : 'radio'}" id="${id}-${i}" name="${key}" data-key="${key}" value="${esc(o)}"${vals.includes(o) ? ' checked' : ''}><span>${esc(o)}</span></label>`).join('')}</div></div>`;
+  }
+  if (f.type === 'scale') {
+    return `<div class="field scale" role="group" aria-labelledby="${id}-l"><div class="lbl" id="${id}-l">${esc(f.label)}</div><div class="chips">${[1, 2, 3, 4, 5].map(n =>
+      `<label class="chip"><input type="radio" id="${id}-${n}" name="${key}" data-key="${key}" value="${n}"${String(val) === String(n) ? ' checked' : ''}><span>${n}</span></label>`).join('')}</div><div class="scale-ends"><span>1 ${esc(f.ends[0])}</span><span>5 ${esc(f.ends[1])}</span></div></div>`;
+  }
+  if (f.type === 'photos') {
+    const jobId = key.split('.')[1];
+    const job = state.jobs.find(j => j.id === jobId) || { id: jobId };
+    return `<div class="field"><div class="lbl" id="${id}-l">${esc(f.label)}</div>${hint}<div class="photos" data-photos="${jobId}">${photosHTML(job)}</div><label class="add-photo">הוספת תמונות<input type="file" accept="image/*" multiple data-upload="${jobId}" aria-labelledby="${id}-l"></label><div class="photo-msg" data-photomsg="${jobId}" hidden></div></div>`;
+  }
+  return '';
+}
+
+function jobHTML(job, n) {
+  const halves = JOB_FIELDS.filter(f => f.half);
+  const body = [];
+  let halvesDone = false;
+  for (const f of JOB_FIELDS) {
+    if (f.half) {
+      if (!halvesDone) { body.push(`<div class="grid2">${halves.map(h => fieldHTML(h, job[h.id], `j.${job.id}.${h.id}`)).join('')}</div>`); halvesDone = true; }
+      continue;
+    }
+    body.push(fieldHTML(f, job[f.id], `j.${job.id}.${f.id}`));
+  }
+  return `<div class="job" data-job="${job.id}"><div class="job-head"><h3>עבודה ${n}</h3><button type="button" class="btn-del" data-remove="${job.id}">מחיקה</button></div>${body.join('')}</div>`;
+}
+
+const EXAMPLE = `<div class="job example"><div class="job-head"><h3>איך נראית עבודה ממולאת</h3><span class="tag">דוגמה</span></div>
+  <div class="ex-row"><b>מה עשיתם</b><span>ניקוי גינה מוזנחת, גיזום 3 עצי פרי ופינוי גזם</span></div>
+  <div class="ex-row"><b>גודל, מצב וגישה</b><span>בערך 120 מ"ר · מצב 4 מתוך 5 · גישה בינונית</span></div>
+  <div class="ex-row"><b>זמן ומחיר</b><span>2 אנשים, 6 שעות · 2,400 ₪ בסך הכל, מזה 600 ₪ פינוי</span></div>
+  <div class="ex-row"><b>תגובה</b><span>הלקוח התמקח · בדיעבד המחיר היה נמוך מדי</span></div>
+  <div class="ex-row"><b>תמונות</b><span>2 תמונות: הגינה לפני ואחרי</span></div></div>`;
+
+function sectionCount(s) {
+  if (s.jobs) return { done: state.jobs.filter(j => isFilled(j.price)).length, total: null };
+  return { done: s.fields.filter(f => isFilled(state.answers[f.id])).length, total: s.fields.length };
+}
+
+function render() {
+  form.innerHTML = SECTIONS.map(s => {
+    const c = sectionCount(s);
+    const count = s.jobs ? `<span class="count" data-count="${s.id}">${c.done} עבודות עם מחיר</span>` : `<span class="count" data-count="${s.id}">${c.done} מתוך ${c.total} נענו</span>`;
+    const inner = s.jobs
+      ? `${EXAMPLE}<div id="jobs" style="display:grid;gap:16px">${state.jobs.map((j, i) => jobHTML(j, i + 1)).join('')}</div><button type="button" class="btn ghost" id="addJob">הוספת עבודה</button>`
+      : s.fields.map(f => fieldHTML(f, state.answers[f.id], 'a.' + f.id)).join('');
+    return `<section class="sec" id="sec-${s.id}"><div class="sec-head"><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${count}</div>${inner}</section>`;
+  }).join('');
+  renderNav();
+}
+
+function renderNav() {
+  document.getElementById('nav').innerHTML = SECTIONS.map(s => {
+    const c = sectionCount(s);
+    const done = s.jobs ? c.done >= 10 : c.done >= Math.ceil(c.total / 2);
+    return `<a href="#sec-${s.id}" class="${done ? 'done' : ''}">${esc(s.nav)}</a>`;
+  }).join('') + `<a href="#sec-finish">סיום</a>`;
+}
+
+function updateCounts() {
+  for (const s of SECTIONS) {
+    const el = form.querySelector(`[data-count="${s.id}"]`);
+    if (!el) continue;
+    const c = sectionCount(s);
+    el.textContent = s.jobs ? `${c.done} עבודות עם מחיר` : `${c.done} מתוך ${c.total} נענו`;
+  }
+  renderNav();
+}
+
+function readValue(el) {
+  if (el.type === 'checkbox') return [...form.querySelectorAll(`input[name="${CSS.escape(el.name)}"]:checked`)].map(i => i.value);
+  return el.value;
+}
+
+function setValue(key, v) {
+  const parts = key.split('.');
+  if (parts[0] === 'a') state.answers[parts[1]] = v;
+  else { const job = state.jobs.find(j => j.id === parts[1]); if (job) job[parts[2]] = v; }
+}
+
+function onEdit(e) {
+  const el = e.target;
+  if (!el.dataset || !el.dataset.key) return;
+  setValue(el.dataset.key, readValue(el));
+  updateCounts();
+  schedule();
+}
+form.addEventListener('input', onEdit);
+form.addEventListener('change', onEdit);
+
+form.addEventListener('click', e => {
+  if (e.target.id === 'addJob') {
+    const job = newJob();
+    state.jobs.push(job);
+    document.getElementById('jobs').insertAdjacentHTML('beforeend', jobHTML(job, state.jobs.length));
+    document.getElementById('f-j-' + job.id + '-title').focus();
+    updateCounts(); schedule();
+    return;
+  }
+  const unphoto = e.target.closest('[data-unphoto]');
+  if (unphoto) {
+    const job = state.jobs.find(j => j.id === unphoto.dataset.unphoto);
+    if (job && job.photos) { job.photos.splice(Number(unphoto.dataset.i), 1); refreshPhotos(job.id); schedule(); }
+    return;
+  }
+  const del = e.target.closest('[data-remove]');
+  if (del) {
+    if (!del.classList.contains('armed')) {
+      del.classList.add('armed'); del.textContent = 'למחוק? לחצו שוב';
+      setTimeout(() => { del.classList.remove('armed'); del.textContent = 'מחיקה'; }, 4000);
+      return;
+    }
+    state.jobs = state.jobs.filter(j => j.id !== del.dataset.remove);
+    if (!state.jobs.length) state.jobs = [newJob()];
+    render(); schedule();
+  }
+});
+
+// --- Photos: shrink on the phone, upload to Supabase Storage, keep the public URL on the job ---
+function refreshPhotos(jobId) {
+  const box = form.querySelector(`[data-photos="${jobId}"]`);
+  const job = state.jobs.find(j => j.id === jobId);
+  if (box && job) box.innerHTML = photosHTML(job);
+}
+
+function photoMsg(jobId, text) {
+  const el = form.querySelector(`[data-photomsg="${jobId}"]`);
+  if (!el) return;
+  el.textContent = text || '';
+  el.hidden = !text;
+}
+
+async function shrink(file) {
+  // Phone photos are 3-8 MB; 1600px JPEG is plenty to judge a garden and uploads fast on mobile data.
+  try {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bmp.width * scale);
+    canvas.height = Math.round(bmp.height * scale);
+    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.82));
+    if (blob) return { blob, ext: 'jpg', type: 'image/jpeg' };
+  } catch (e) {}
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+  return { blob: file, ext, type: file.type || 'image/jpeg' };
+}
+
+async function uploadPhoto(jobId, file) {
+  const { blob, ext, type } = await shrink(file);
+  const path = `${state.rid}/${jobId}/${Date.now()}-${uid()}.${ext}`;
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${PHOTO_BUCKET}/${path}`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': type, 'x-upsert': 'false' },
+    body: blob,
+  });
+  if (!res.ok) throw new Error('upload ' + res.status);
+  return `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${path}`;
+}
+
+form.addEventListener('change', async e => {
+  const input = e.target.closest('[data-upload]');
+  if (!input || !input.files.length) return;
+  const jobId = input.dataset.upload;
+  const files = [...input.files];
+  input.value = '';
+  photoMsg(jobId, '');
+  if (!navigator.onLine) { photoMsg(jobId, 'אין חיבור לאינטרנט. נסו להוסיף את התמונות שוב כשיש קליטה.'); return; }
+  const list = pending[jobId] = pending[jobId] || [];
+  let failed = 0;
+  await Promise.all(files.map(async file => {
+    const p = { key: uid(), status: 'up' };
+    list.push(p); refreshPhotos(jobId);
+    try {
+      const url = await uploadPhoto(jobId, file);
+      const job = state.jobs.find(j => j.id === jobId);
+      if (job) { job.photos = (job.photos || []).concat(url); schedule(); }
+      list.splice(list.indexOf(p), 1);
+    } catch (err) {
+      failed++;
+      list.splice(list.indexOf(p), 1);
+    }
+    refreshPhotos(jobId);
+  }));
+  if (failed) photoMsg(jobId, failed === 1 ? 'תמונה אחת לא עלתה. נסו להוסיף אותה שוב.' : `${failed} תמונות לא עלו. נסו להוסיף אותן שוב.`);
+});
+
+// --- Saving: browser copy always; Supabase copy whenever there's a connection ---
+let saving = false, again = false, timer = null, retryDelay = 5000;
+
+function setStatus(kind) {
+  const map = { saving: ['שומר...', ''], saved: ['נשמר ונשלח', 'ok'], pending: ['', ''], offline: ['נשמר בטלפון, יישלח כשיהיה חיבור', ''], error: ['השליחה נכשלה, ננסה שוב', 'err'] };
+  const [t, c] = map[kind] || ['', ''];
+  statusEl.textContent = t; statusEl.className = 'status ' + c;
+}
+
+function saveLocal() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function schedule() {
+  state.updatedAt = Date.now();
+  state.dirty = true;
+  saveLocal();
+  setStatus('pending');
+  clearTimeout(timer);
+  timer = setTimeout(flush, 1200);
+}
+
+async function flush() {
+  if (!state.dirty) return;
+  if (!navigator.onLine) { setStatus('offline'); return; }
+  if (saving) { again = true; return; }
+  saving = true; again = false; setStatus('saving');
+  const sentAt = state.updatedAt;
+  try {
+    const { dirty, ...data } = state;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/save_gardener_response`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_id: state.rid, p_data: data }),
+    });
+    if (!res.ok) throw new Error('save ' + res.status);
+    if (state.updatedAt === sentAt) { state.dirty = false; saveLocal(); }
+    retryDelay = 5000;
+    setStatus('saved');
+  } catch (e) {
+    setStatus(navigator.onLine ? 'error' : 'offline');
+    clearTimeout(timer);
+    timer = setTimeout(flush, retryDelay);
+    retryDelay = Math.min(retryDelay * 2, 60000);
+  }
+  saving = false;
+  if (again) flush();
+}
+
+window.addEventListener('online', () => { retryDelay = 5000; flush(); });
+window.addEventListener('offline', () => { if (state.dirty) setStatus('offline'); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+
+render();
+saveLocal();
+if (state.dirty) flush();
+else if (state.updatedAt) setStatus('saved');
+
+// --- Plain-text export for WhatsApp ---
+function asText() {
+  const out = [];
+  for (const s of SECTIONS) {
+    if (s.jobs) {
+      const jobs = state.jobs.filter(j => JOB_FIELDS.some(f => isFilled(j[f.id])));
+      if (!jobs.length) continue;
+      out.push('*' + s.title + '*');
+      jobs.forEach((j, i) => {
+        out.push(`עבודה ${i + 1}:`);
+        for (const f of JOB_FIELDS) {
+          if (!isFilled(j[f.id])) continue;
+          if (f.type === 'photos') { out.push(`  ${f.label}:`); j.photos.forEach(u => out.push('  ' + u)); continue; }
+          out.push(`  ${f.label} ${[].concat(j[f.id]).join(', ')}${f.unit ? ' ' + f.unit : ''}`);
+        }
+      });
+    } else {
+      const rows = s.fields.filter(f => isFilled(state.answers[f.id]));
+      if (!rows.length) continue;
+      out.push('*' + s.title + '*');
+      for (const f of rows) out.push(`${f.label} ${[].concat(state.answers[f.id]).join(', ')}${f.unit ? ' ' + f.unit : ''}`);
+    }
+    out.push('');
+  }
+  return out.join('\n').trim() || 'עוד לא מולאו תשובות.';
+}
+
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  const text = asText();
+  const box = document.getElementById('copyBox');
+  const btn = document.getElementById('copyBtn');
+  box.value = text;
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = 'הועתק. אפשר להדביק בוואטסאפ';
+    setTimeout(() => { btn.textContent = 'העתקת כל התשובות'; }, 3000);
+  } catch (e) {
+    box.hidden = false; box.focus(); box.select();
+    btn.textContent = 'סמנו את הטקסט למטה והעתיקו';
+  }
+});
+</script>
+</body>
+</html>
