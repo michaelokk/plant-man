@@ -2,7 +2,7 @@
 
 A pricing questionnaire for gardeners (in Hebrew). It collects how they price today, their real past jobs with photos, and what they want from a pricing app.
 
-Live page: https://michaelokk.github.io/plant-man-/
+Live page: https://michaelokk.github.io/plant-man/
 
 ## How it works
 
